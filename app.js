@@ -57,7 +57,6 @@ var dialToUser;
         
         console.log('userName2',userName);
         $("#name").val('');
-        login(userName);
         fireChatEngine();       
         event.preventDefault();
     }

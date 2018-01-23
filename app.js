@@ -65,7 +65,7 @@ var dialToUser;
 
   $("#login").click(function(event) {
     sessionName = $("#session_name").val();
-    $("#session_name").val('');    
+    //$("#session_name").val('');    
     console.log('sessionName',sessionName);
     $("#call").prop('disabled', false);        
     
@@ -73,10 +73,17 @@ var dialToUser;
   });
 
   $("#call").click(function(event) {
+    console.log('ddddd',$("#call").val());
     dialToUser = $("#user_name").val();
-    $("#user_name").val('');        
+   // $("#user_name").val('');        
     console.log('userName',dialToUser);
-    makeCall(dialToUser);
+    if( $("#call").val() == 'Call'){
+      $("#call").val('HangUp');   
+      makeCall(dialToUser);      
+    }else{
+      $("#call").val('Call');   
+      hangup();   
+    }
   });
   
   

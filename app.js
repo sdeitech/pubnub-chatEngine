@@ -24,6 +24,8 @@ ChatEngine = ChatEngineCore.create({
   subscribeKey: 'sub-c-5f3ae6c6-ff5c-11e7-b290-a263d5bf97a8'
 });
 var userName;
+var sessionName;
+var dialToUser;
   //console.log('chatEn',ChatEngine);
   // const getUsername = () => {
   //   const animals = ['zebra', 'goat', 'cow', 'pig', 'tiger', 'wolf', 'pony', 'antelope'];
@@ -53,50 +55,100 @@ var userName;
         $("#message").prop('disabled', false);
         $("#name").prop('disabled', true);        
         
-        console.log('userName',userName);
+        console.log('userName2',userName);
         $("#name").val('');
-        fireChatEngine();
+        login(userName);
+        fireChatEngine();       
         event.preventDefault();
     }
+  });
+
+  $("#login").click(function(event) {
+    sessionName = $("#session_name").val();
+    $("#session_name").val('');    
+    console.log('sessionName',sessionName);
+    $("#call").prop('disabled', false);        
+    
+    login(sessionName);
+  });
+
+  $("#call").click(function(event) {
+    dialToUser = $("#user_name").val();
+    $("#user_name").val('');        
+    console.log('userName',dialToUser);
+    makeCall(dialToUser);
   });
   
   
   function fireChatEngine(){
     let me = ChatEngine.connect(getUsername());
-  ChatEngine.on('$.ready', (data) => {
-  
-      let me = data.me;
-  
-      let chat = new ChatEngine.Chat('new-chat');
-  
-      chat.on('$.connected', (payload) => {
-        appendMessage(me.uuid , 'Connected to chat!');
-      });
-  
-      chat.on('$.online.here', (payload) => {
-        appendMessage('Status', payload.user.uuid + ' is in the channel!');
-      });
-  
-      chat.on('$.online.join', (payload) => {
-        appendMessage('Status', payload.user.uuid + ' has come online!');
-      });
-  
-      chat.on('message', (payload) => {
-        appendMessage(payload.sender.uuid, payload.data.text);
-      });
-  
-      $("#message").keypress(function(event) {
-        if (event.which == 13) {
-            chat.emit('message', {
-                    text: $('#message').val()
-            });
-            $("#message").val('');
-            event.preventDefault();
-        }
-      });
+    ChatEngine.on('$.ready', (data) => {
+    
+        let me = data.me;
+    
+        let chat = new ChatEngine.Chat('new-chat');
+    
+        chat.on('$.connected', (payload) => {
+          appendMessage(me.uuid , 'Connected to chat!');
+        });
+    
+        chat.on('$.online.here', (payload) => {
+          appendMessage('Status', payload.user.uuid + ' is in the channel!');
+        });
+    
+        chat.on('$.online.join', (payload) => {
+          appendMessage('Status', payload.user.uuid + ' has come online!');
+        });
+    
+        chat.on('message', (payload) => {
+          appendMessage(payload.sender.uuid, payload.data.text);
+        });
+    
+        $("#message").keypress(function(event) {
+          if (event.which == 13) {
+              chat.emit('message', {
+                      text: $('#message').val()
+              });
+              $("#message").val('');
+              event.preventDefault();
+          }
+        });
 
-  
+    
+    });
+  }
+
+function login(sessionName) {
+  console.log('login called',sessionName);
+  var video_out = document.getElementById("vid-box");  
+  var phone = window.phone = PHONE({
+      number        : sessionName || "Anonymous", // listen on username line else Anonymous
+      publish_key   : 'pub-c-9db329d4-3c99-4301-af2b-615d4932e74c',
+      subscribe_key : 'sub-c-02b4d60e-e08b-11e7-8b5d-3e564a31a465',
+  }); 
+  console.log('phone',phone);
+  phone.ready(function(){
+  console.log('Ready ! Go green');
+   //form.username.style.background="#55ff5b"; });
+   $("#call").css({'background-color' : '#008000'});
+  phone.receive(function(session){
+      session.connected(function(session) { video_out.appendChild(session.video); });
+      session.ended(function(session) { video_out.innerHTML=''; });
   });
+  return false; 
+});
+}
+
+function makeCall(number){
+  if (!window.phone) alert("Login First!");
+  else phone.dial(number);
+  //$('#Button').removeAttr('disabled');
+  return false;
+}
+
+function hangup(){
+  console.log('call ended');
+  phone.hangup();
 }
   // app.get('/', function(req, res){
   //   res.sendFile('index.html');

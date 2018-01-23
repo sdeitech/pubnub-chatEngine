@@ -9,7 +9,7 @@
       height: 250px;
       overflow-y: auto;
     }
-  </style>
+  </style> 
 </head>
 <body>
   <div class="container">
@@ -18,12 +18,20 @@
           <div class="list-group" id="log"></div>
           <input type="text" class="form-control" id="name" placeholder="Enter your name...">          
           <input type="text" disabled="disabled" class="form-control" id="message" placeholder="Your message here...">
+          <input type="text" class="form-control" id="session_name" placeholder="Pick a user name for Video Chat...">          
+          <input id="login" type="button" value="Login"/>
+          <input type="text" class="form-control" id="user_name" placeholder="Enter user to dial...">          
+          <input id="call" disabled="disabled" type="button" value="Call"/>          
         </div>
     </div>
+    <div id="vid-box"></div>
+    
   </div>
   <script type="text/javascript" src="node_modules/jquery/dist/jquery.js"></script>
   <script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.js"></script>
   <script type="text/javascript" src="node_modules/chat-engine/dist/chat-engine.js"></script>
+  <script src="https://cdn.pubnub.com/pubnub.min.js"></script>
+  <script src="https://stephenlb.github.io/webrtc-sdk/js/webrtc-v2.js"></script>
   <script type="text/javascript" src="app.js"></script>
 </body>
 </html>

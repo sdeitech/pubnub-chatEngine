@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>My es6 modules</title>
+</head>
+<body>
+<div id="vid-box"></div>
+
+<form name="loginForm" id="login" action="#" onsubmit="return login(this);">
+    <input type="text" name="username" id="username" placeholder="Pick a username!" />
+    <input type="submit" name="login_submit" value="Log In">
+</form>
+
+
+<form name="callForm" id="call" action="#" onsubmit="return makeCall(this);">
+    <input type="text" name="number" placeholder="Enter user to dial!" />
+    <input type="submit" value="Call"/>
+<!--     <button onclick="hangup() disabled="disabled">Hangup</button> 
+ -->    <input id="Button" type="button" value="Hangup" onclick="hangup();"/>
+ </form>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://cdn.pubnub.com/pubnub.min.js"></script>
+<!-- <script src="http://kevingleason.me/SimpleRTC/js/webrtc.js"></script>
+ -->
+<script src="https://stephenlb.github.io/webrtc-sdk/js/webrtc-v2.js"></script>
+ <script type="text/javascript">
+var video_out = document.getElementById("vid-box");
+$('#Button').attr('disabled','disabled');
+
+function login(form) {
+    console.log('login called');
+    var phone = window.phone = PHONE({
+        number        : form.username.value || "Anonymous", // listen on username line else Anonymous
+        publish_key   : 'pub-c-9db329d4-3c99-4301-af2b-615d4932e74c',
+        subscribe_key : 'sub-c-02b4d60e-e08b-11e7-8b5d-3e564a31a465',
+    }); 
+    console.log('phone',phone);
+    phone.ready(function(){
+    console.log('Ready ! Go green');
+     form.username.style.background="#55ff5b"; });
+    phone.receive(function(session){
+        session.connected(function(session) { video_out.appendChild(session.video); });
+        session.ended(function(session) { video_out.innerHTML=''; });
+    });
+    return false;   // So the form does not submit.
+}
+
+function makeCall(form){
+    if (!window.phone) alert("Login First!");
+    else phone.dial(form.number.value);
+    $('#Button').removeAttr('disabled');
+    return false;
+}
+function hangup(){
+    console.log('call ended');
+    phone.hangup();
+}
+
+</script>
+</body>
+</html>
+
